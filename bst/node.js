@@ -1,6 +1,7 @@
 module.exports = class Node {
-  constructor() {
-    this.data = null;
+  constructor(data = null) {
+    if (null !== data && isNaN(+data)) throw new 'Invalid input';
+    this.data = +data || null;
     this.left = null;
     this.right = null;
   }

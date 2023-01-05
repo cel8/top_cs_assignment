@@ -1,7 +1,7 @@
 const Node = require('./node');
 
 module.exports = class BalancedBST {
-  constructor(vector) {
+  constructor(vector = []) {
     this.root = null;
     this.array = [];
     if (!(vector instanceof Array)) throw new 'Invalid input';
@@ -50,17 +50,14 @@ module.exports = class BalancedBST {
     this.root = this.sortedArrayToBST(0, this.array.length - 1);
   }
 
-  insert(value) {
+  insertIterative(value, node = this.root) {
     let prev;
-    let temp = this.root;
-    const node = new Node();
-    // Set value
-    node.setData = value;
+    let temp = node;
+    const newNode = new Node(value);
 
     // Check root
     if (!temp) {
-      this.root = node; 
-      return;
+      return newNode;
     }
 
     // Search node to insert in BST
@@ -74,16 +71,29 @@ module.exports = class BalancedBST {
         temp = temp.getRight;
       } else {
         // Do not insert the same key (exclude duplicates)
-        return;
+        return node;
       }
     }
 
     // Left subtree
     if (prev.getData > value) {
-      prev.setLeft = node;
+      prev.setLeft = newNode;
     } else {
-      prev.setRight = node;
+      prev.setRight = newNode;
     }
+
+    return node;
+  }
+
+  insertRecursive(value, node = this.root) {
+    if (!node) return new Node(value);
+    if (value < node.getData) node.setLeft = this.insertRecursive(value, node.getLeft);
+    else if (value > node.getData) node.setRight = this.insertRecursive(value, node.getRight);
+    return node;
+  }
+
+  insert(value, recursive = false) {
+    this.root = recursive ? this.insertRecursive(value) : this.insertIterative(value);
   }
 
   minValueNode(node) {
@@ -149,20 +159,31 @@ module.exports = class BalancedBST {
     this.root = this.deleteNode(data);
   }
 
-  find(value) {
-    const data = +value;
-    let temp = this.root;
-
-    // Invalid data
-    if (isNaN(data)) return null;
-    
+  findIterative(value, node = this.root) {
+    let temp = node;
+  
     while(temp) {
-      if (temp.getData === data) return temp;
-      else if (temp.getData > data) temp = temp.getLeft;
+      if (temp.getData === value) return temp;
+      else if (temp.getData > value) temp = temp.getLeft;
       else temp = temp.getRight;
     }
 
     return null;
+  }
+
+  findRecursive(value, node = this.root) {
+    if (!node || node.getData === value) return node;
+    else if (node.getData > value) return this.findRecursive(value, node.getLeft);
+    else return this.findRecursive(value, node.getRight);
+  }
+
+  find(value, recursive = false) {
+    const data = +value;
+
+    // Invalid data
+    if (isNaN(data)) throw new 'Invalid input';
+    
+    return recursive ? this.findRecursive(value) : this.findIterative(value);
   }
 
   height(node) {
