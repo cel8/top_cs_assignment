@@ -4,8 +4,8 @@ const Node = require('./node');
 const mockBST = {
   bst0: function() {
     const tree = new BalancedBST([]);
-    this.array = [];
-    this.root = null;
+    tree.array = [];
+    tree.root = null;
     return tree;
   },
   bst1: function() {
@@ -40,6 +40,143 @@ const mockBST = {
   bst4: function() {
     const tree = this.bst3();
     tree.root.right.right.right.right = new Node(15);
+    return tree;
+  },
+  bst5: function() {
+    const tree = this.bst1();
+    tree.root.right.right.right = new Node(15);
+    return tree;
+  },
+  bst6: function() {
+    const tree = this.bst4();
+    tree.root.left.left = new Node(-1);
+    tree.root.left.left.left = new Node(-4);
+    return tree;
+  },
+  bst7: function() {
+    const tree = this.bst4();
+    tree.root.left.left = new Node(-4);
+    return tree;
+  },
+  bst8: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(15);
+    tree.root.left = new Node(10);
+    tree.root.left.left = new Node(8);
+    tree.root.left.right = new Node(12);
+    tree.root.right = new Node(20);
+    tree.root.right.left = new Node(16);
+    tree.root.right.right = new Node(25);
+    return tree;
+  },
+  bst9: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(16);
+    tree.root.left = new Node(10);
+    tree.root.left.left = new Node(8);
+    tree.root.left.right = new Node(12);
+    tree.root.right = new Node(20);
+    tree.root.right.right = new Node(25);
+    return tree;
+  },
+  bst10: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(15);
+    tree.root.left = new Node(10);
+    tree.root.left.left = new Node(8);
+    tree.root.left.right = new Node(12);
+    tree.root.right = new Node(20);
+    tree.root.right.left = new Node(16);
+    tree.root.right.left.right = new Node(17);
+    tree.root.right.left.right.right = new Node(18);
+    tree.root.right.right = new Node(25);
+    return tree;
+  },
+  bst11: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(16);
+    tree.root.left = new Node(10);
+    tree.root.left.left = new Node(8);
+    tree.root.left.right = new Node(12);
+    tree.root.right = new Node(20);
+    tree.root.right.left = new Node(17);
+    tree.root.right.left.right = new Node(18);
+    tree.root.right.right = new Node(25);
+    return tree;
+  },
+  bst12: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(1);
+    return tree;
+  },
+  bst13: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(2);
+    return tree;
+  },
+  bst14: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(1);
+    tree.root.right = new Node(2);
+    return tree;
+  },
+  bst15: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(15);
+    tree.root.left = new Node(10);
+    tree.root.left.left = new Node(8);
+    tree.root.left.right = new Node(12);
+    tree.root.right = new Node(20);
+    tree.root.right.left = new Node(16);
+    tree.root.right.right = new Node(25);
+    return tree;
+  },
+  bst16: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(15);
+    tree.root.left = new Node(10);
+    tree.root.left.left = new Node(8);
+    tree.root.left.right = new Node(12);
+    tree.root.right = new Node(25);
+    tree.root.right.left = new Node(16);
+    return tree;
+  },
+  bst17: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(15);
+    tree.root.left = new Node(10);
+    tree.root.left.left = new Node(8);
+    tree.root.left.right = new Node(12);
+    tree.root.right = new Node(20);
+    tree.root.right.left = new Node(16);
+    tree.root.right.left.right = new Node(17);
+    tree.root.right.left.right.right = new Node(18);
+    tree.root.right.right = new Node(25);
+    tree.root.right.right.right = new Node(28);
+    return tree;
+  },
+  bst18: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(15);
+    tree.root.left = new Node(10);
+    tree.root.left.left = new Node(8);
+    tree.root.left.right = new Node(12);
+    tree.root.right = new Node(25);
+    tree.root.right.left = new Node(16);
+    tree.root.right.left.right = new Node(17);
+    tree.root.right.left.right.right = new Node(18);
+    tree.root.right.right = new Node(28);
     return tree;
   },
 }
@@ -217,11 +354,131 @@ describe('BalancedBST', () => {
     tree.insert(1, true);
     expect(tree).toEqual(mockBST.bst1());
   });
-  test.skip('Delete', () => {
-    const tree = new BalancedBST([1, 2, 3, 4]);
-    tree.buildTree();
-    tree.insert(1, true);
-    expect(tree).toEqual(mockBST.bst1());
+  test('Invalid delete', () => {
+    expect(() => {
+      const tree = new BalancedBST();
+      tree.delete('ciao');
+    }).toThrow('Invalid input');
+  });
+  test('Delete root which is a leaf', () => {
+    const tree = mockBST.bst12();
+    tree.delete(1);
+    expect(tree).toEqual(mockBST.bst0());
+  });
+  test('Delete root with a leaf', () => {
+    const tree = mockBST.bst14();
+    tree.delete(1);
+    expect(tree).toEqual(mockBST.bst13());
+  });
+  test('Delete root\'s leaf', () => {
+    const tree = mockBST.bst14();
+    tree.delete(2);
+    expect(tree).toEqual(mockBST.bst12());
+  });
+  test('Delete node\'s leaf in right subtree', () => {
+    const tree = mockBST.bst4();
+    tree.delete(15);
+    expect(tree).toEqual(mockBST.bst3());
+  });
+  test('Delete node\'s leaf in left subtree', () => {
+    const tree = mockBST.bst7();
+    tree.delete(-4);
+    expect(tree).toEqual(mockBST.bst4());
+  });
+  test('Delete node in right subtree with only one child path', () => {
+    const tree = mockBST.bst4();
+    tree.delete(5);
+    expect(tree).toEqual(mockBST.bst5());
+  });
+  test('Delete node in left subtree with only one child path', () => {
+    const tree = mockBST.bst6();
+    tree.delete(-1);
+    expect(tree).toEqual(mockBST.bst7());
+  });
+  test('Delete root in a complete BST #1', () => {
+    const tree = mockBST.bst8();
+    tree.delete(15);
+    expect(tree).toEqual(mockBST.bst9());
+  });
+  test('Delete root in a complete BST #2 [min node has right subtree]', () => {
+    const tree = mockBST.bst10();
+    tree.delete(15);
+    expect(tree).toEqual(mockBST.bst11());
+  });
+  test('Delete node in a complete BST #1', () => {
+    const tree = mockBST.bst15();
+    tree.delete(20);
+    expect(tree).toEqual(mockBST.bst16());
+  });
+  test('Delete node in a complete BST #2 [min node has right subtree]', () => {
+    const tree = mockBST.bst17();
+    tree.delete(20);
+    expect(tree).toEqual(mockBST.bst18());
+  });
+  test('Delete unexisting data in a complete BST', () => {
+    const tree = mockBST.bst10();
+    tree.delete(50);
+    expect(tree).toEqual(mockBST.bst10());
+  });
+  test('Delete root which is a leaf (recursive)', () => {
+    const tree = mockBST.bst12();
+    tree.delete(1, true);
+    expect(tree).toEqual(mockBST.bst0());
+  });
+  test('Delete root with a leaf (recursive)', () => {
+    const tree = mockBST.bst14();
+    tree.delete(1, true);
+    expect(tree).toEqual(mockBST.bst13());
+  });
+  test('Delete root\'s leaf (recursive)', () => {
+    const tree = mockBST.bst14();
+    tree.delete(2, true);
+    expect(tree).toEqual(mockBST.bst12());
+  });
+  test('Delete node\'s leaf in right subtree (recursive)', () => {
+    const tree = mockBST.bst4();
+    tree.delete(15, true);
+    expect(tree).toEqual(mockBST.bst3());
+  });
+  test('Delete node\'s leaf in left subtree (recursive)', () => {
+    const tree = mockBST.bst7();
+    tree.delete(-4, true);
+    expect(tree).toEqual(mockBST.bst4());
+  });
+  test('Delete node in right subtree with only one child path (recursive)', () => {
+    const tree = mockBST.bst4();
+    tree.delete(5, true);
+    expect(tree).toEqual(mockBST.bst5());
+  });
+  test('Delete node in left subtree with only one child path (recursive)', () => {
+    const tree = mockBST.bst6();
+    tree.delete(-1, true);
+    expect(tree).toEqual(mockBST.bst7());
+  });
+  test('Delete root in a complete BST #1 (recursive)', () => {
+    const tree = mockBST.bst8();
+    tree.delete(15, true);
+    expect(tree).toEqual(mockBST.bst9());
+  });
+  test('Delete root in a complete BST #2 [min node has right subtree] (recursive)', () => {
+    const tree = mockBST.bst10();
+    tree.delete(15, true);
+    expect(tree).toEqual(mockBST.bst11());
+  });
+  test('Delete node in a complete BST #1 (recursive)', () => {
+    const tree = mockBST.bst15();
+    tree.delete(20, true);
+    expect(tree).toEqual(mockBST.bst16());
+  });
+  test('Delete node in a complete BST #2 [min node has right subtree] (recursive)', () => {
+    const tree = mockBST.bst17();
+    tree.delete(20, true);
+    expect(tree).toEqual(mockBST.bst18());
+  });
+  test('Delete unexisting data in a complete BST (recursive)', () => {
+    const tree = mockBST.bst10();
+    tree.delete(50, true);
+    expect(tree).toEqual(mockBST.bst10());
   });
   test('Find root', () => {
     const tree = mockBST.bst4();
@@ -275,75 +532,72 @@ describe('BalancedBST', () => {
       tree.find('ciao', true);
     }).toThrow('Invalid input');
   });
-
-  test.skip('test2', () => {
-    const tree = new BalancedBST([1, 2, 3, 4]);
-    tree.buildTree();
-    tree.insert(5);
-    tree.insert(15);
-    tree.printTree();
-    console.log(tree.find(1));
-    console.log(tree.find(5));
-    console.log(tree.find(15));
-    console.log(tree.find(17));
-    console.log(tree.find(4));
-    console.log(tree.height(tree.root));
-    console.log(tree.height(tree.root.getLeft));
-    console.log(tree.height(tree.root.getRight));
-    console.log(tree.depth(tree.root));
-    console.log(tree.depth(tree.root.getLeft));
-    console.log(tree.depth(tree.root.getRight));
-    console.log(tree.depth(tree.root.getRight.getRight.getRight));
-    expect(1).toEqual(1);
+  test('Invalid height', () => {
+    expect(() => {
+      const tree = new BalancedBST();
+      tree.height('ciao');
+    }).toThrow('Invalid input');
   });
-  test.skip('test3', () => {
-    const tree = new BalancedBST([1, 2, 3, 4]);
-    tree.buildTree();
-    tree.insert(5);
-    tree.insert(15);
-    tree.delete(15);
-    tree.printTree();
-    expect(1).toEqual(1);
+  test('Height root is 5', () => {
+    const tree = mockBST.bst4();
+    expect(tree.height()).toEqual(5);
   });
-  test.skip('test4', () => {
-    const tree = new BalancedBST([1, 2, 3, 4]);
-    tree.buildTree();
-    tree.insert(5);
-    tree.insert(15);
-    tree.delete(5);
-    tree.printTree();
-    expect(1).toEqual(1);
+  test('Height left subtree is 1', () => {
+    const tree = mockBST.bst4();
+    expect(tree.height(tree.root.getLeft)).toEqual(1);
   });
-  test.skip('test5', () => {
-    const tree = new BalancedBST([1, 2, 3, 4]);
-    tree.buildTree();
-    tree.insert(-1);
-    tree.insert(-4);
-    tree.insert(5);
-    tree.insert(15);
-    tree.delete(-1);
-    tree.printTree();
-    expect(1).toEqual(1);
+  test('Height right subtree is 4', () => {
+    const tree = mockBST.bst4();
+    expect(tree.height(tree.root.getRight)).toEqual(4);
   });
-  test.skip('test6', () => {
-    const tree = new BalancedBST([1, 2]);
-    tree.buildTree();
-    tree.delete(1);
-    tree.printTree();
-    expect(1).toEqual(1);
+  test('Height root is 5 (recursive)', () => {
+    const tree = mockBST.bst4();
+    expect(tree.height(tree.root, true)).toEqual(5);
   });
-  test.skip('test7', () => {
-    const tree = new BalancedBST([1]);
-    tree.buildTree();
-    tree.delete(1);
-    tree.printTree();
-    expect(1).toEqual(1);
+  test('Height left subtree is 1 (recursive)', () => {
+    const tree = mockBST.bst4();
+    expect(tree.height(tree.root.getLeft, true)).toEqual(1);
   });
-  test.skip('test8', () => {
-    const tree = new BalancedBST([]);
-    tree.buildTree();
-    tree.delete(5);
-    tree.printTree();
-    expect(1).toEqual(1);
+  test('Height right subtree is 4 (recursive)', () => {
+    const tree = mockBST.bst4();
+    expect(tree.height(tree.root.getRight, true)).toEqual(4);
+  });
+  test('Invalid depth', () => {
+    expect(() => {
+      const tree = new BalancedBST();
+      tree.depth('ciao');
+    }).toThrow('Invalid input');
+  });
+  test('Depth root is 0', () => {
+    const tree = mockBST.bst4();
+    expect(tree.depth()).toEqual(0);
+  });
+  test('Depth left subtree is 1', () => {
+    const tree = mockBST.bst4();
+    expect(tree.depth(tree.root.getLeft)).toEqual(1);
+  });
+  test('Depth right subtree is 1', () => {
+    const tree = mockBST.bst4();
+    expect(tree.depth(tree.root.getRight)).toEqual(1);
+  });
+  test('Depth right subtree leaf is 4', () => {
+    const tree = mockBST.bst4();
+    expect(tree.depth(tree.root.getRight.getRight.getRight.getRight)).toEqual(4);
+  });
+  test('Depth root is 0 (recursive)', () => {
+    const tree = mockBST.bst4();
+    expect(tree.depth(tree.root, true)).toEqual(0);
+  });
+  test('Depth left subtree is 1 (recursive)', () => {
+    const tree = mockBST.bst4();
+    expect(tree.depth(tree.root.getLeft, true)).toEqual(1);
+  });
+  test('Depth right subtree is 1 (recursive)', () => {
+    const tree = mockBST.bst4();
+    expect(tree.depth(tree.root.getRight, true)).toEqual(1);
+  });
+  test('Depth right subtree leaf is 4', () => {
+    const tree = mockBST.bst4();
+    expect(tree.depth(tree.root.getRight.getRight.getRight.getRight)).toEqual(4);
   });
 });
