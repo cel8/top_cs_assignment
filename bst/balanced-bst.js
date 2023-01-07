@@ -3,16 +3,7 @@ const Node = require('./node');
 module.exports = class BalancedBST {
   constructor(vector = []) {
     this.root = null;
-    this.array = [];
-    if (!(vector instanceof Array)) throw new 'Invalid input';
-    // if (vector === []) throw new 'Invalid empty vector';
-    if (vector !== []) {
-      // Sort vector
-      vector.sort((a,b) => a - b);
-      this.array = vector.filter((element, index) => {
-        return vector.indexOf(element) === index;
-      });
-    }
+    this.#generateArray(vector);
   }
 
   #prettyPrint(node, prefix = '', isLeft = true) {
@@ -30,6 +21,18 @@ module.exports = class BalancedBST {
 
     if (node.left !== null) {
       this.#prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
+    }
+  }
+
+  #generateArray(vector = []) {
+    this.array = [];
+    if (!(vector instanceof Array)) throw new 'Invalid input';
+    if (vector !== []) {
+      // Sort vector
+      vector.sort((a,b) => a - b);
+      this.array = vector.filter((element, index) => {
+        return vector.indexOf(element) === index;
+      });
     }
   }
 
@@ -328,6 +331,248 @@ module.exports = class BalancedBST {
     if (!node) return 0;
 
     return recursive ? this.#depthRecursive(node) : this.#depthIterative(node);
+  }
+
+  #levelOrderIterative(node = this.root) {
+    let nodes = [];
+    let data = [];
+
+    // When root is not empty
+    if (node) nodes.push(node);
+
+    // Iterates in breadth-first
+    while (nodes.length) {
+      // Get front from queue
+      const front = nodes.shift();
+
+      // Push data in data vector
+      data.push(front.getData);
+
+      if (front.getLeft) nodes.push(front.getLeft);
+      if (front.getRight) nodes.push(front.getRight);
+    }
+
+    return data;
+  }
+
+  #levelOrderRecursive(node = this.root, data = [], level = 0) {
+    if (!node) return;
+
+    if (!level) data.push(node.getData);
+    else {
+      this.#levelOrderRecursive(node.getLeft, data, level - 1);
+      this.#levelOrderRecursive(node.getRight, data, level - 1);
+    }
+  }
+
+  // BFS traversal
+  levelOrder(node = this.root, recursive = false) {
+    if (!(node instanceof Node) && (null !== node)) throw new 'Invalid input';
+
+    if (!node) return [];
+    
+    if (recursive) {
+      let data = [];
+      const height = this.height(node, true);
+      for (let l = 0; l < height; ++l) this.#levelOrderRecursive(node, data, l);
+      return data;
+    } else {
+      return this.#levelOrderIterative(node);
+    }
+  }
+
+  // DFS traversal left -> root -> right
+  #inOrderIterative(node = this.root) {
+    let nodes = [];
+    let current = node;
+    let data = [];
+
+    // Loop until current is null or stack is empty
+    while (current || nodes.length) {
+      // Push the current node and go deep left
+      while (current) {
+        nodes.push(current);
+        current = current.getLeft;
+      }
+
+      // Get top from queue
+      current = nodes.pop();
+      
+      // get root data first
+      data.push(current.getData);
+
+      // Go in right subtree
+      current = current.getRight;
+    }
+
+    return data;
+  }
+
+  // DFS traversal root -> left -> right
+  #preOrderIterative(node = this.root) {
+    let nodes = [];
+    let data = [];
+
+    // When root is not empty
+    if (node) nodes.push(node);
+
+    // Iterates in depth-first
+    while (nodes.length) {
+      // Get back from queue
+      const back = nodes.pop();
+      
+      // get root data first
+      data.push(back.getData);
+
+      // Push data in data vector
+      if (back.getRight) nodes.push(back.getRight);
+      if (back.getLeft) nodes.push(back.getLeft);
+    }
+
+    return data;
+  }
+  
+  // DFS traversal left -> right -> root 
+  #postOrderIterative(node = this.root) {
+    let nodes = [];
+    let data = [];
+
+    // When root is not empty
+    if (node) nodes.push(node);
+
+    // Iterates in depth-first
+    while (nodes.length) {
+      // Get back from queue
+      const back = nodes.pop();
+      
+      // get root data first
+      data.push(back.getData);
+
+      // Push data in data vector
+      if (back.getLeft) nodes.push(back.getLeft);
+      if (back.getRight) nodes.push(back.getRight);
+    }
+
+    return data.reverse();
+  }
+  
+  #inOrderRecursive(node = this.root, data = []) {
+    if (!node) return;
+
+    this.#inOrderRecursive(node.getLeft, data);
+
+    data.push(node.getData);
+
+    this.#inOrderRecursive(node.getRight, data);
+  }
+
+  #preOrderRecursive(node = this.root, data = []) {
+    if (!node) return;
+
+    data.push(node.getData);
+
+    this.#preOrderRecursive(node.getLeft, data);
+    this.#preOrderRecursive(node.getRight, data);
+  }
+
+  #postOrderRecursive(node = this.root, data = []) {
+    if (!node) return;
+
+    this.#postOrderRecursive(node.getLeft, data);
+    this.#postOrderRecursive(node.getRight, data);
+    
+    data.push(node.getData);
+  }
+
+  inOrder(node = this.root, recursive = false) {
+    if (!(node instanceof Node) && (null !== node)) throw new 'Invalid input';
+
+    if (!node) return [];
+    
+    if (recursive) {
+      let data = [];
+      this.#inOrderRecursive(node, data);
+      return data;
+    } else {
+      return this.#inOrderIterative(node);
+    }
+  }
+
+  preOrder(node = this.root, recursive = false) {
+    if (!(node instanceof Node) && (null !== node)) throw new 'Invalid input';
+
+    if (!node) return [];
+    
+    if (recursive) {
+      let data = [];
+      this.#preOrderRecursive(node, data);
+      return data;
+    } else {
+      return this.#preOrderIterative(node);
+    }
+  }
+
+  postOrder(node = this.root, recursive = false) {
+    if (!(node instanceof Node) && (null !== node)) throw new 'Invalid input';
+
+    if (!node) return [];
+    
+    if (recursive) {
+      let data = [];
+      this.#postOrderRecursive(node, data);
+      return data;
+    } else {
+      return this.#postOrderIterative(node);
+    }
+  }
+
+  #isBalancedIterative(node = this.root) {
+    let nodes = [];
+
+    if (!node) return true;
+
+    nodes.push(node);
+
+    // Iterates in breadth-first
+    while (nodes.length) {
+      // Get front from queue
+      const front = nodes.shift();
+
+      // Get height difference between left/rigth subtree of front
+      const hDiff = Math.abs(this.height(front.getRight) - this.height(front.getLeft));
+      
+      // Is not balanced
+      if (hDiff > 1) return false;
+
+      // Push its children to stack
+      if (front.getLeft) nodes.push(front.getLeft);
+      if (front.getRight) nodes.push(front.getRight);
+    }
+
+    return true;
+  }
+
+  #isBalancedRecursive(node = this.root) {
+    if (!node) return true;
+    const hDiff = Math.abs(this.height(node.getRight, true) - this.height(node.getLeft, true));
+    return hDiff <= 1
+           && this.#isBalancedRecursive(node.getLeft)
+           && this.#isBalancedRecursive(node.getRight);
+  }
+
+  isBalanced(recursive = false) {
+    return recursive ? this.#isBalancedRecursive() : this.#isBalancedIterative();
+  }
+
+  rebalance() {
+    // Already balanced
+    if (this.isBalanced()) return;
+    
+    // DPS to get inorder vector
+    this.#generateArray(this.inOrder());
+
+    // Rebuild tree
+    this.buildTree();
   }
 
   printTree() {

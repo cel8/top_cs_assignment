@@ -179,6 +179,18 @@ const mockBST = {
     tree.root.right.right = new Node(28);
     return tree;
   },
+  bst19: function() {
+    const tree = new BalancedBST();
+    tree.array = [];
+    tree.root = new Node(100);
+    tree.root.left = new Node(20);
+    tree.root.right = new Node(200);
+    tree.root.left.left = new Node(10);
+    tree.root.left.right = new Node(30);
+    tree.root.right.left = new Node(150);
+    tree.root.right.right = new Node(300);
+    return tree;
+  }
 }
 
 describe('Node', () => {
@@ -600,4 +612,74 @@ describe('BalancedBST', () => {
     const tree = mockBST.bst4();
     expect(tree.depth(tree.root.getRight.getRight.getRight.getRight)).toEqual(4);
   });
+  test('Level order BST #1', () => {
+    const tree = mockBST.bst0();
+    expect(tree.levelOrder(tree.root)).toEqual([]);
+  });
+  test('Level order BST #2', () => {
+    const tree = mockBST.bst2();
+    expect(tree.levelOrder(tree.root)).toEqual([8, 4, 67, 1, 5, 9, 324, 3, 7, 23, 6345 ]);
+  });
+  test('Level order BST #3', () => {
+    const tree = mockBST.bst17();
+    expect(tree.levelOrder(tree.root)).toEqual([15, 10, 20, 8, 12, 16, 25, 17, 28, 18 ]);
+  });
+  test('Level order BST #1 (recursive)', () => {
+    const tree = mockBST.bst0();
+    expect(tree.levelOrder(tree.root, true)).toEqual([]);
+  });
+  test('Level order BST #2 (recursive)', () => {
+    const tree = mockBST.bst2();
+    expect(tree.levelOrder(tree.root, true)).toEqual([8, 4, 67, 1, 5, 9, 324, 3, 7, 23, 6345 ]);
+  });
+  test('Level order BST #3 (recursive)', () => {
+    const tree = mockBST.bst17();
+    expect(tree.levelOrder(tree.root, true)).toEqual([15, 10, 20, 8, 12, 16, 25, 17, 28, 18 ]);
+  });
+  test('In-Order BST', () => {
+    const tree = mockBST.bst19();
+    expect(tree.inOrder(tree.root)).toEqual([ 10, 20, 30, 100, 150, 200, 300 ]);
+  });
+  test('Pre-Order BST', () => {
+    const tree = mockBST.bst19();
+    expect(tree.preOrder(tree.root)).toEqual([ 100, 20, 10, 30, 200, 150, 300 ]);
+  });
+  test('Post-Order BST', () => {
+    const tree = mockBST.bst19();
+    expect(tree.postOrder(tree.root)).toEqual([ 10, 30, 20, 150, 300, 200, 100 ]);
+  });
+  test('In-Order BST (recursive)', () => {
+    const tree = mockBST.bst19();
+    expect(tree.inOrder(tree.root, true)).toEqual([ 10, 20, 30, 100, 150, 200, 300 ]);
+  });
+  test('Pre-Order BST (recursive)', () => {
+    const tree = mockBST.bst19();
+    expect(tree.preOrder(tree.root, true)).toEqual([ 100, 20, 10, 30, 200, 150, 300 ]);
+  });
+  test('Post-Order BST (recursive)', () => {
+    const tree = mockBST.bst19();
+    expect(tree.postOrder(tree.root, true)).toEqual([ 10, 30, 20, 150, 300, 200, 100 ]);
+  });
+  test('BST is balanced', () => {
+    const tree = mockBST.bst15();
+    expect(tree.isBalanced()).toBe(true);
+  });
+  test('BST is not balanced', () => {
+    const tree = mockBST.bst17();
+    expect(tree.isBalanced()).toBe(false);
+  });
+  test('BST is balanced (recursive)', () => {
+    const tree = mockBST.bst15();
+    expect(tree.isBalanced(true)).toBe(true);
+  });
+  test('BST is not balanced (recursive)', () => {
+    const tree = mockBST.bst17();
+    expect(tree.isBalanced(true)).toBe(false);
+  });
+  test('Unbalanced BST to balanced BST', () => {
+    const tree = mockBST.bst17();
+    expect(tree.isBalanced()).toBe(false);
+    tree.rebalance();
+    expect(tree.isBalanced()).toBe(true);
+  })
 });
